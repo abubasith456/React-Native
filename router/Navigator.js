@@ -6,12 +6,13 @@ import Login from "../screens/LoginScreen"
 import SignUp from "../screens/SignUpScreen"
 import Forgot from "../screens/ForgotPasswordScreen"
 import OTP from "../screens/OTPVerificationScren"
+import Details from "../screens/ProductDetailsScreen"
 
 const Stack = createNativeStackNavigator();
 
 export const RootStack = () => {
     return (
-        <Stack.Navigator initialRouteName="Splash">
+        <Stack.Navigator initialRouteName="Home">
             <Stack.Screen
                 name="Splash"
                 component={Splash}
@@ -31,7 +32,9 @@ export const RootStack = () => {
             }} />
             <Stack.Screen name="OTP" component={OTP} options={{
                 headerShown: false,
+                headerTitleAlign: 'left'
             }} />
+            <Stack.Screen name="Details" component={Details} />
         </Stack.Navigator>
     );
 };
