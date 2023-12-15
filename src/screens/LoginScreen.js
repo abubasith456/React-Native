@@ -11,8 +11,9 @@ import { emailValidator } from '../helper/EmailValidator'
 import { passwordValidator } from '../helper/PasswordValidator'
 import Progress from '../components/ProgressBar'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchProducts, login } from '../repositories/apiRepo';
+import { login } from '../repositories/apiRepo';
 import ShowDialog from '../components/Dailog'
+import { resetState } from '../redux/loginRedux/loginSlice'
 
 
 const LoginScreen = ({ navigation }) => {
@@ -21,15 +22,14 @@ const LoginScreen = ({ navigation }) => {
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
     const { data, isLoader, isError } = useSelector(state => state.login);
-    console.log(isLoader)
     useEffect(() => {
         if (data != null) {
             if (data.status == 200) {
-                navigation.dispatch(
-                    CommonActions.navigate({
-                        name: 'Home',
-                    })
-                )
+                dispatch(resetState())
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                })
             } else {
                 setVisible(true)
             }
@@ -40,7 +40,7 @@ const LoginScreen = ({ navigation }) => {
         }
     }, [data, isLoader, isError])
 
-    const onLoginPressed = async () => {
+    const onLoginPressed = () => {
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
         if (emailError || passwordError) {

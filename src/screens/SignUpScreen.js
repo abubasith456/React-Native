@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
@@ -11,13 +11,37 @@ import { emailValidator } from '../helper/EmailValidator'
 import { passwordValidator } from '../helper/PasswordValidator'
 import { nameValidator } from '../helper/NameValidator'
 import { CommonActions } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux'
+import { register } from '../repositories/apiRepo';
+import ShowDialog from '../components/Dailog'
 
 export default function RegisterScreen({ navigation }) {
     const [name, setName] = useState({ value: '', error: '' })
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
+    const { data, isLoader, isError } = useSelector(state => state.register);
+    const [visible, setVisible] = useState(false);
+    const dispatch = useDispatch();
 
-    const onSignUpPressed = () => {
+    useEffect(() => {
+        if (data != null) {
+            if (data.status == 200) {
+                navigation.dispatch(
+                    CommonActions.navigate({
+                        name: 'Home',
+                    })
+                )
+            } else {
+                setVisible(true)
+            }
+        } else {
+            if (isError) {
+                setVisible(true)
+            }
+        }
+    }, [data, isLoader, isError])
+
+    const onSignUpPressed = async () => {
         const nameError = nameValidator(name.value)
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
@@ -27,14 +51,23 @@ export default function RegisterScreen({ navigation }) {
             setPassword({ ...password, error: passwordError })
             return
         }
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-        })
+
+        const usernameValue = name.value
+        const emailValue = email.value
+        const passwordValue = password.value
+        console.log(usernameValue)
+        dispatch(register({ usernameValue, emailValue, passwordValue }))
+
+    }
+
+    function onDialogPressed() {
+        setVisible(false)
     }
 
     return (
         <Background>
+            {isLoader ? <Progress isLoading={isLoader} /> : null}
+            {visible ? <ShowDialog message={data.message} onPress={onDialogPressed} /> : null}
             <BackButton goBack={goBack} />
             <Header>Create Account</Header>
             <TextInput

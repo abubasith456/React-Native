@@ -1,12 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchProducts, login } from '../../repositories/apiRepo';
 
+
+const initialState = {
+    data: null,
+    isLoader: false,
+    isError: false,
+}
+
+
 export const loginSlice = createSlice({
     name: 'login',
-    initialState: {
-        data: null,
-        isLoader: false,
-        isError: false,
+    initialState: initialState,
+    reducers: {
+        resetState: (state) => initialState,
     },
     extraReducers: builder => {
         builder.addCase(login.pending, (state, action) => {
@@ -56,4 +63,5 @@ const Productslice = createSlice({
     },
 });
 
+export const { resetState } = loginSlice.actions;
 export default loginSlice.reducer;
