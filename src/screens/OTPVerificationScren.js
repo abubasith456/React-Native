@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import { CommonActions } from '@react-navigation/native';
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
 import Header from '../components/Header'
 import Button from '../components/Button'
-import { CommonActions } from '@react-navigation/native';
 import { theme } from '../theme/Theme'
 import { otpValidator } from '../helper/OTPValidator'
 import BackButton from '../components/BackButton'
@@ -29,7 +29,11 @@ export default function OTPVerificationScreen({ route, navigation }) {
             if (data.status == 200) {
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: 'Home' }],
+                    routes: [{
+                        name: 'UpdatePassword', params: {
+                            email: email
+                        }
+                    }],
                 })
             } else {
                 setVisible(true)
@@ -80,7 +84,6 @@ export default function OTPVerificationScreen({ route, navigation }) {
                 }}
                 autoFocusOnLoad={true}
                 codeInputFieldStyle={styles.underlineStyleBase}
-                codeInputHighlightStyle={styles.underlineStyleHighLighted}
                 selectionColor={"#03DAC6"}
             />
             {otp.error ? <Text style={styles.error}>{otp.error}</Text> : null}
@@ -117,5 +120,13 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: theme.colors.error,
         paddingTop: 8,
+    },
+    underlineStyleBase: {
+        width: 30,
+        height: 45,
+        color: 'black'
+    },
+    underlineStyleHighLighted: {
+        borderColor: '#03DAC6',
     },
 })

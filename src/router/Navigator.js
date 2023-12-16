@@ -11,6 +11,8 @@ import { Button, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import TabNavigator from "./TabNavigation";
 import { getLoggedUser } from "../services/StorageUtils";
+import UpdatePasswordScreen from "../screens/UpdatePassword";
+
 
 const Stack = createNativeStackNavigator();
 const loggedIn = ""
@@ -78,6 +80,9 @@ export const RootStack = () => {
                 headerTitleAlign: 'left'
             }} />
             <Stack.Screen name="Details" component={Details} />
+            <Stack.Screen name="UpdatePassword" component={UpdatePasswordScreen} options={{
+                headerShown: false,
+            }} />
         </Stack.Navigator>
     );
 };

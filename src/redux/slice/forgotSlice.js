@@ -1,12 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { forgotPassword } from '../../repositories/apiRepo';
 
-const forgotSlice = createSlice({
+const initialState = {
+    data: null,
+    isLoader: false,
+    isError: false,
+}
+
+export const forgotSlice = createSlice({
     name: 'forgot',
-    initialState: {
-        data: null,
-        isLoader: false,
-        isError: false,
+    initialState: initialState,
+    reducers: {
+        resetForgotState: (state) => initialState,
     },
     extraReducers: builder => {
         builder.addCase(forgotPassword.pending, (state, action) => {
@@ -28,4 +33,5 @@ const forgotSlice = createSlice({
 
 });
 
+export const { resetForgotState } = forgotSlice.actions;
 export default forgotSlice.reducer;

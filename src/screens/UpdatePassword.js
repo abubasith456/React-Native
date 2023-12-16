@@ -1,40 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { TouchableOpacity, StyleSheet, View, Spinner } from 'react-native'
-import { Text } from 'react-native-paper'
+import { TouchableOpacity, StyleSheet, View } from 'react-native'
 import Background from '../components/Background'
 import Header from '../components/Header'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import { CommonActions } from '@react-navigation/native';
 import { theme } from '../theme/Theme'
-import { emailValidator } from '../helper/EmailValidator'
-import { passwordValidator } from '../helper/PasswordValidator'
+import { confirmPasswordValidator, passwordValidator } from '../helper/PasswordValidator'
 import Progress from '../components/ProgressBar'
 import { useSelector, useDispatch } from 'react-redux'
-import { login } from '../repositories/apiRepo';
+import BackButton from '../components/BackButton'
 import ShowDialog from '../components/Dailog'
 import { resetState } from '../redux/loginRedux/loginSlice'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loggedInUser } from '../services/StorageUtils'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { updatePasword } from '../repositories/apiRepo'
 
 
+const UpdatePasswordScreen = ({ navigation, route }) => {
 
-const UpdatePasswordScreen = ({ navigation }) => {
-    const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
+    const [confPassword, setConfirmPassword] = useState({ value: '', error: '' })
     const [visible, setVisible] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfPassword, setConfShowPassword] = useState(false);
     const dispatch = useDispatch();
-    const { data, isLoader, isError } = useSelector(state => state.login);
+    const { data, isLoader, isError } = useSelector(state => state.updatePassword);
     useEffect(() => {
+        console.log(route.params.email)
         if (data != null) {
             if (data.status == 200) {
-                const userId = data.userData.user_id
-                loggedInUser(userId.toString());
-                dispatch(resetState())
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'TabNavigator' }],
-                })
+                setVisible(true)
             } else {
                 setVisible(true)
             }
@@ -45,80 +41,88 @@ const UpdatePasswordScreen = ({ navigation }) => {
         }
     }, [data, isLoader, isError])
 
-    const onLoginPressed = () => {
-        const emailError = emailValidator(email.value)
+    const onUpdatePressed = () => {
         const passwordError = passwordValidator(password.value)
-        if (emailError || passwordError) {
-            setEmail({ ...email, error: emailError })
+        const confirmPasswordError = confirmPasswordValidator(password.value, confPassword.value)
+        if (passwordError || confirmPasswordError) {
+            setConfirmPassword({ ...confPassword, error: confirmPasswordError })
             setPassword({ ...password, error: passwordError })
             return
         }
-        const emailValue = email.value
+        const email = route.params.email
         const passwordValue = password.value
-        dispatch(login({ emailValue, passwordValue }))
+        const confirmPasswordValue = confPassword.value
+        dispatch(updatePasword({ email, passwordValue, confirmPasswordValue }))
     }
 
     function onDialogPressed() {
         setVisible(false)
+        if (data.status == 200) {
+            navigation.dispatch(
+                CommonActions.navigate({
+                    name: 'Login',
+                })
+            )
+        }
+    }
+
+    function goBack() {
+        navigation.dispatch(
+            CommonActions.navigate({
+                name: 'Login',
+            })
+        )
     }
 
     return (
         < Background >
             {isLoader ? <Progress isLoading={isLoader} /> : null}
             {visible ? <ShowDialog message={data.message} onPress={onDialogPressed} /> : null}
-            <Header>Welcome back.</Header>
-            <TextInput
-                label="Email"
-                returnKeyType="next"
-                value={email.value}
-                onChangeText={(text) => setEmail({ value: text, error: '' })}
-                error={!!email.error}
-                errorText={email.error}
-                autoCapitalize="none"
-                autoCompleteType="email"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-            />
+            <BackButton goBack={goBack} />
+            <Header>Update Password</Header>
             <View style={styles.searchSection}>
-            <Icon style={styles.searchIcon} name="ios-search" size={20} color="#000"/>
                 <TextInput
                     label="Password"
-                    returnKeyType="done"
+                    returnKeyType="next"
                     value={password.value}
                     onChangeText={(text) => setPassword({ value: text, error: '' })}
                     error={!!password.error}
                     errorText={password.error}
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
                 />
+                <Ionicons style={styles.searchIcon} name={showPassword ? "ios-eye" : "ios-eye-off"} size={25} color={25} onPress={() => {
+                    setShowPassword(!showPassword)
+                }} />
             </View>
-            <View style={styles.forgotPassword}>
+            <View style={styles.searchSection}>
+                <TextInput
+                    label="ConfPassword"
+                    returnKeyType="done"
+                    disabled={password.value.length == 0 ? true : false}
+                    value={confPassword.value}
+                    onChangeText={(text) => setConfirmPassword({ value: text, error: '' })}
+                    error={!!confPassword.error}
+                    errorText={confPassword.error}
+                    secureTextEntry={!showConfPassword}
+                />
+                <Ionicons style={styles.searchIcon} name={showConfPassword ? "ios-eye" : "ios-eye-off"} size={25} color={25} onPress={() => {
+                    setConfShowPassword(!showConfPassword)
+                }} />
+            </View>
+            {/* <View style={styles.forgotPassword}>
                 <TouchableOpacity
                     onPress={() =>
-                        navigation.dispatch(
-                            CommonActions.navigate({
-                                name: 'Forgot',
-                            })
-                        )
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'TabNavigator' }],
+                        })
                     }
                 >
-                    <Text style={styles.forgot}>Forgot your password?</Text>
                 </TouchableOpacity>
-            </View>
-            <Button mode="contained" onPress={onLoginPressed}>
-                Login
+            </View> */}
+            <Button mode="contained" onPress={onUpdatePressed}>
+                Update
             </Button>
-            <View style={styles.row}>
-                <Text>Don’t have an account? </Text>
-                <TouchableOpacity onPress={() =>
-                    navigation.dispatch(
-                        CommonActions.navigate({
-                            name: 'SignUp',
-                        })
-                    )
-                }>
-                    <Text style={styles.link}>Sign up</Text>
-                </TouchableOpacity>
-            </View>
         </Background >
     )
 }
@@ -145,11 +149,11 @@ const styles = StyleSheet.create({
         color: theme.colors.primary,
     },
     searchSection: {
-        flex: 1,
+        width: '100%',
+        marginHorizontal: 20,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
     },
     searchIcon: {
         padding: 10,

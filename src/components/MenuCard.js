@@ -43,7 +43,7 @@ const ChatTileCard = ({ icon, data, onPress }) => {
     return (
         <Pressable onPress={onPress}>
             <ChatCardContainer>
-                <Ionicons name={icon} size={40} color={40} />
+                <Ionicons name={icon} size={40} color={40}/>
                 <ContentContainer>
                     <Text>{data}</Text>
                 </ContentContainer>

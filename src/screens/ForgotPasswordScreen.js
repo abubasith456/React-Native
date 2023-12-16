@@ -12,6 +12,7 @@ import BackButton from '../components/BackButton'
 import { useSelector, useDispatch } from 'react-redux'
 import { forgotPassword } from '../repositories/apiRepo';
 import ShowDialog from '../components/Dailog'
+import { resetForgotState } from '../redux/slice/forgotSlice'
 
 export default function ForgotPasswordScreen({ navigation }) {
     const [email, setEmail] = useState({ value: '', error: '' })
@@ -46,6 +47,7 @@ export default function ForgotPasswordScreen({ navigation }) {
     function onDialogPressed() {
         setVisible(false)
         if (data.status == 200) {
+            dispatch(resetForgotState())
             navigation.dispatch(
                 CommonActions.navigate('OTP', {
                     email: email.value

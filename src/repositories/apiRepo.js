@@ -60,3 +60,19 @@ export const verifyOtp = createAsyncThunk('otpVerify', async (payload) => {
     return response;
 
 });
+
+// Update password
+export const updatePasword = createAsyncThunk('updatePassword', async (payload) => {
+    console.log(payload.email)
+    const param = {
+        email: payload.email,
+        newPassword: payload.passwordValue,
+        cnfrmNewPassword: payload.confirmPasswordValue
+    }
+    const res = await axiosInstance.post("/changePassword", param);
+    const response = await res.data;
+    return response;
+
+});
+
+
