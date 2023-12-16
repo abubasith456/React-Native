@@ -1,6 +1,8 @@
 
-import { FlatList } from 'react-native';
+import { FlatList, View, StyleSheet, ScrollView } from 'react-native';
 import HomeTileCard from '../components/HomeTileCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Searchbar } from 'react-native-paper';
 
 
 const DUMMYDATA = [
@@ -22,8 +24,48 @@ function HomeScreen({ navigation }) {
         return <HomeTileCard item={item} onPress={pressHandler} />
     }
     return (
-        <FlatList data={DUMMYDATA} keyExtractor={item => item.id} renderItem={renderItem} numColumns={2} />
+        <SafeAreaView style={styles.bodyContainer}>
+            <ScrollView>
+                <View >
+                    <Searchbar style={styles.bodyContainer}>
+
+                    </Searchbar>
+                </View>
+
+                <FlatList
+                    data={DUMMYDATA} keyExtractor={item => item.id} renderItem={renderItem} numColumns={2} />
+
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+    container: {
+        width: "100%",
+        flexDirecion: "row",
+        backgroundColor: 'red',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        paddingBottom: 0,
+        flex: 1,
+    },
+    bodyContainer: {
+        width: "100%",
+        flexDirecion: "row",
+        paddingBottom: 0,
+        flex: 1,
+    },
+    searchContainer: {
+        marginTop: 10,
+        width: "100%",
+    },
+    inputContainer: {
+        width: "70%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});

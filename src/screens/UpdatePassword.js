@@ -19,7 +19,7 @@ import { loggedInUser } from '../services/StorageUtils'
 
 
 
-const LoginScreen = ({ navigation }) => {
+const UpdatePasswordScreen = ({ navigation }) => {
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
     const [visible, setVisible] = useState(false);
@@ -79,15 +79,18 @@ const LoginScreen = ({ navigation }) => {
                 textContentType="emailAddress"
                 keyboardType="email-address"
             />
-            <TextInput
-                label="Password"
-                returnKeyType="done"
-                value={password.value}
-                onChangeText={(text) => setPassword({ value: text, error: '' })}
-                error={!!password.error}
-                errorText={password.error}
-                secureTextEntry
-            />
+            <View style={styles.searchSection}>
+            <Icon style={styles.searchIcon} name="ios-search" size={20} color="#000"/>
+                <TextInput
+                    label="Password"
+                    returnKeyType="done"
+                    value={password.value}
+                    onChangeText={(text) => setPassword({ value: text, error: '' })}
+                    error={!!password.error}
+                    errorText={password.error}
+                    secureTextEntry
+                />
+            </View>
             <View style={styles.forgotPassword}>
                 <TouchableOpacity
                     onPress={() =>
@@ -121,7 +124,7 @@ const LoginScreen = ({ navigation }) => {
 }
 
 
-export default LoginScreen
+export default UpdatePasswordScreen
 
 const styles = StyleSheet.create({
     forgotPassword: {
@@ -140,5 +143,24 @@ const styles = StyleSheet.create({
     link: {
         fontWeight: 'bold',
         color: theme.colors.primary,
+    },
+    searchSection: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+    },
+    searchIcon: {
+        padding: 10,
+    },
+    input: {
+        flex: 1,
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 0,
+        backgroundColor: '#fff',
+        color: '#424242',
     },
 })

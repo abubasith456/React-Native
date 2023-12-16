@@ -1,19 +1,20 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { StackActions } from '@react-navigation/native';
+import { getLoggedUser } from "../services/StorageUtils";
 
 const SplashScreen = ({ navigation }) => {
 
-    setTimeout(function () {
-        navigation.dispatch(
-            StackActions.replace('Login', {
-                user: 'jane',
-            })
-        );
+    setTimeout(async function () {
+        await getLoggedUser().then((value) => {
+            const screen = value != "" && value != null ? 'TabNavigator' : 'Login'
+            navigation.dispatch(
+                StackActions.replace(screen)
+            );
+        })
     }, 4000);
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
             <Image source={require('../images/logo.png')}
                 style={styles.image} />
         </View>

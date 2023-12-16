@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Splash from "../screens/SplashScreen"
 import Home from "../screens/HomeScreen";
@@ -9,13 +9,32 @@ import OTP from "../screens/OTPVerificationScren"
 import Details from "../screens/ProductDetailsScreen"
 import { Button, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import TabNavigator from "./TabNavigation";
+import { getLoggedUser } from "../services/StorageUtils";
 
 const Stack = createNativeStackNavigator();
-
+const loggedIn = ""
 export const RootStack = () => {
     const navigation = useNavigation();
+    const [visible, setVisible] = useState(false);
+
+    const data = async () => {
+        const temp = await getLoggedUser();
+        console.log(" ===> " + temp)
+        if (temp != "" && temp != null) {
+            setVisible(true)
+        } else {
+            setVisible(false)
+        }
+        console.log(visible)
+    }
+
+    useEffect(() => {
+        data();
+    }, [])
+
     return (
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Splash">
             <Stack.Screen
                 name="Splash"
                 component={Splash}
@@ -23,6 +42,9 @@ export const RootStack = () => {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen name="TabNavigator" component={TabNavigator} options={{
+                headerShown: false,
+            }} />
             <Stack.Screen name="Login" component={Login} options={{
                 headerShown: false,
             }} />
